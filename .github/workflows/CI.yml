@@ -24,5 +24,5 @@ jobs:
             - name: Build ROS Package
               run: |
                   source ./.env
-                  docker exec "$CONTAINER_NAME" /bin/zsh -c "source /opt/ros/humble/setup.zsh && colcon build"
+                  docker exec "$CONTAINER_NAME" /bin/zsh -c "source /opt/ros/humble/setup.zsh && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-skip arise_slam_mid360 arise_slam_mid360_msgs livox_ros_driver2 receive_theta"
               shell: /usr/bin/bash -e {0}

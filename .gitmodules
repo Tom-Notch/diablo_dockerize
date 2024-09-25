@@ -6,3 +6,7 @@
 	path = src/cv_bridge_customize
 	url = https://github.com/Tom-Notch/cv_bridge_customize.git
 	branch = humble
+[submodule "src/diablo"]
+	path = src/diablo
+	url = https://github.com/jizhang-cmu/autonomy_stack_diablo_setup.git
+	branch = humble

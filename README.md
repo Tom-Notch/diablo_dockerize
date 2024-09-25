@@ -1,8 +1,10 @@
-# New Docker Repository
+# Dockerized Diablo Template
 
-[![pre-commit](https://github.com/Tom-Notch/ROS-Repository-Template/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/Tom-Notch/ROS-Repository-Template/actions/workflows/pre-commit.yml) [![Continuous Integration](https://github.com/Tom-Notch/ROS-Repository-Template/actions/workflows/CI.yml/badge.svg)](https://github.com/Tom-Notch/ROS-Repository-Template/actions/workflows/CI.yml)
+[![pre-commit](https://github.com/Tom-Notch/diablo_dockerize/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/Tom-Notch/diablo_dockerize/actions/workflows/pre-commit.yml) [![Continuous Integration](https://github.com/Tom-Notch/diablo_dockerize/actions/workflows/CI.yml/badge.svg)](https://github.com/Tom-Notch/diablo_dockerize/actions/workflows/CI.yml)
 
-This template uses Docker for easy deployment and testing. It also includes GitHub Actions for CI/CD.
+- Git submodule in [src/diablo](src/diablo) is from [Diablo](https://github.com/jizhang-cmu/autonomy_stack_diablo_setup.git)
+
+- Note that the docker is multi-arch, so it can be run on both x86 and arm64 architectures.
 
 ## Dependencies
 
@@ -10,59 +12,44 @@ This template uses Docker for easy deployment and testing. It also includes GitH
 
 ## Usage Guidelines
 
-### Base Repo
+1. Clone the repository
 
-1. Change [LICENSE](LICENSE) if necessary
+   ```bash
+   git clone --recursive https://github.com/Tom-Notch/diablo_dockerize.git
+   ```
 
-1. Modify [.pre-commit-config.yaml](.pre-commit-config.yaml) according to your need
+1. Run docker image
 
-1. Modify/add GitHub workflow status badges in [README.md](README.md)
+   ```bash
+   docker-compose up -d
+   ```
 
-### Docker Config
+   or
 
-1. Modify **DOCKER_USER**, **IMAGE_NAME** in [.env](.env)
+   ```bash
+   ./scripts/run.sh
+   ```
 
-1. Modify the service name from **default** to your service name in [docker-compose.yml](docker-compose.yml)
+1. Attach to the docker container
 
-1. Update [Dockerfile](docker/latest/Dockerfile)
+   ```bash
+   docker attach diablo
+   ```
 
-   - Your Docker image must contain a complete ROS installation as the ROS node will run inside the container
+1. Build
 
-1. [build.sh](scripts/build.sh) to build and test the image locally in your machine's architecture
+   ```bash
+   colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-skip arise_slam_mid360 arise_slam_mid360_msgs livox_ros_driver2 receive_theta
+   ```
 
-1. [push.sh](scripts/push.sh) to push the multi-arch image to the registry
+1. Source the workspace
 
-### ROS Config
+   ```bash
+   source ./install/setup.zsh
+   ```
 
-The template ROS package has both C++ and Python entrypoints. You can modify the package to suit your needs.
+1. Run
 
-1. Find all occurrences of **new_package** in code using your IDE's global search feature and replace them with your new ROS package name, must follow *underscore_naming_convention*, these include:
-
-   1. package.xml
-   1. CMakeLists.txt
-   1. Python sources under scripts and src (both under the package directory)
-   1. C++ sources under include and src (both under the package directory)
-   1. launch files
-   1. shell script [launch.sh](scripts/launch.sh) to launch docker container and the ROS node
-
-1. Find all occurrences of **new_package** or **NewPackage** in the naming of folders and source files and replace them with your package name, must follow *underscore_naming_convention* for python files and *UpperCamelCase* for non-entrypoint C++ files, these include:
-
-   1. package directory
-   1. Python library directory
-   1. C++ library directory under include
-
-1. Update name of **launch files**
-
-1. (Optional) In ROS 2 Humble, definitions of **msg, action, and srv** file have to be put in a **dedicated standalone package**, otherwise it'll cause conflict with the python portion of new_package, check out [this GitHub issue](https://github.com/ros2/rosidl_python/issues/141) for more info
-
-1. Update the package **dependencies** in **package.xml** and **CMakeLists.txt**
-
-1. Find all occurrences of **new_project** namespace in C++ source files and replace them with your project name
-
-## Developer Quick Start
-
-- Run [scripts/dev-setup.sh](scripts/dev-setup.sh) to setup the development environment
-
-## Note
-
-- This template currently only supports docker image for amd64 and arm64, if you want to support other architectures, please modify the [build.sh](scripts/build.sh) script and [docker-compose.yml](docker-compose.yml) accordingly
+   ```bash
+   ./src/diablo/system_simulation.sh
+   ```
